@@ -123,7 +123,17 @@ class CustomRatingSummary extends StatelessWidget {
       itemSize: 28,
       unratedColor: backgroundColor,
       itemBuilder: (context, index) {
-        return customStarWidget?? Icon(Icons.star, color: starColor);
+        return customStarWidget != null
+    ? SizedBox(
+        height: 16,
+        width: 16,
+        child: FittedBox(child: customStarWidget),
+      )
+    : Icon(
+        Icons.star,
+        color: color,
+        size: 16,
+      ),;
       },
     );
   }
