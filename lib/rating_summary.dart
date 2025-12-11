@@ -116,24 +116,22 @@ class CustomRatingSummary extends StatelessWidget {
   }
 
   Widget _buildStarRating() {
-
-    
     return RatingBarIndicator(
       rating: average,
       itemSize: 28,
       unratedColor: backgroundColor,
       itemBuilder: (context, index) {
         return customStarWidget != null
-    ? SizedBox(
-        height: 16,
-        width: 16,
-        child: FittedBox(child: customStarWidget),
-      )
-    : Icon(
-        Icons.star,
-        color: color,
-        size: 16,
-      ),;
+            ? SizedBox(
+                height: 16,
+                width: 16,
+                child: FittedBox(child: customStarWidget),
+              )
+            : Icon(
+                Icons.star,
+                color: starColor,
+                size: 16,
+              );
       },
     );
   }
@@ -157,7 +155,7 @@ class CustomRatingSummary extends StatelessWidget {
                 _buildStarRating(),
                 const SizedBox(height: 10),
                 Text(
-                  "$label",
+                  label,
                   style: labelStyle,
                   overflow: TextOverflow.fade,
                   textAlign: TextAlign.center,
@@ -174,6 +172,8 @@ class CustomRatingSummary extends StatelessWidget {
               _CustomReviewBar(
                 label: _buildStarLabel(5, fiveStarColor),
                 value: counter > 0 ? counterFiveStars / counter : 0.0,
+                counter: counter,
+                count: counterFiveStars,
                 color: fiveStarColor,
                 space: space,
                 thickness: thickness,
@@ -182,6 +182,8 @@ class CustomRatingSummary extends StatelessWidget {
               _CustomReviewBar(
                 label: _buildStarLabel(4, fourStarColor),
                 value: counter > 0 ? counterFourStars / counter : 0.0,
+                counter: counter,
+                count: counterFourStars,
                 color: fourStarColor,
                 space: space,
                 thickness: thickness,
@@ -190,6 +192,8 @@ class CustomRatingSummary extends StatelessWidget {
               _CustomReviewBar(
                 label: _buildStarLabel(3, threeStarColor),
                 value: counter > 0 ? counterThreeStars / counter : 0.0,
+                counter: counter,
+                count: counterThreeStars,
                 color: threeStarColor,
                 space: space,
                 thickness: thickness,
@@ -198,6 +202,8 @@ class CustomRatingSummary extends StatelessWidget {
               _CustomReviewBar(
                 label: _buildStarLabel(2, twoStarColor),
                 value: counter > 0 ? counterTwoStars / counter : 0.0,
+                counter: counter,
+                count: counterTwoStars,
                 color: twoStarColor,
                 space: space,
                 thickness: thickness,
@@ -206,6 +212,8 @@ class CustomRatingSummary extends StatelessWidget {
               _CustomReviewBar(
                 label: _buildStarLabel(1, oneStarColor),
                 value: counter > 0 ? counterOneStars / counter : 0.0,
+                counter: counter,
+                count: counterOneStars,
                 color: oneStarColor,
                 space: space,
                 thickness: thickness,
@@ -225,6 +233,8 @@ class _CustomReviewBar extends StatelessWidget {
     Key? key,
     required this.label,
     required this.value,
+    required this.counter,
+    required this.count,
     this.color = Colors.amber,
     this.space = 20,
     this.thickness = 10,
@@ -236,6 +246,12 @@ class _CustomReviewBar extends StatelessWidget {
 
   /// The progress value of the bar.
   final double value;
+
+  /// The total counter for calculating display count.
+  final int counter;
+
+  /// The count for this specific rating level.
+  final int count;
 
   /// The color of the bar.
   final Color color;
@@ -286,7 +302,7 @@ class _CustomReviewBar extends StatelessWidget {
           ),
           SizedBox(width: 8),
           Text(
-            '${(value * counter).round()}',
+            '$count',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade600,
