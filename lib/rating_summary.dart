@@ -32,6 +32,7 @@ class CustomRatingSummary extends StatelessWidget {
     this.threeStarColor = Colors.yellow,
     this.twoStarColor = Colors.orange,
     this.oneStarColor = Colors.red,
+    this.customStarWidget,
   }) : super(key: key);
 
   /// The total number of ratings.
@@ -79,6 +80,9 @@ class CustomRatingSummary extends StatelessWidget {
   /// The color of stars.
   final Color starColor;
 
+  /// Custom star widget to replace the default RatingBarIndicator
+  final Widget? customStarWidget;
+
   /// The alignment of rating summary.
   final CrossAxisAlignment alignment;
 
@@ -111,11 +115,48 @@ class CustomRatingSummary extends StatelessWidget {
     );
   }
 
+  Widget _buildStarRating() {
+
+    
+    return RatingBarIndicator(
+      rating: average,
+      itemSize: 28,
+      unratedColor: backgroundColor,
+      itemBuilder: (context, index) {
+        return customStarWidget?? Icon(Icons.star, color: starColor);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (showAverage) ...[
+          Flexible(
+            child: Column(
+              crossAxisAlignment: alignment,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  average.toStringAsFixed(1),
+                  style: averageStyle,
+                ),
+                const SizedBox(height: 8),
+                _buildStarRating(),
+                const SizedBox(height: 10),
+                Text(
+                  "$label",
+                  style: labelStyle,
+                  overflow: TextOverflow.fade,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 30),
+        ],
         Flexible(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -163,32 +204,6 @@ class CustomRatingSummary extends StatelessWidget {
             ],
           ),
         ),
-        if (showAverage) ...[
-          const SizedBox(width: 30),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: alignment,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(average.toStringAsFixed(1), style: averageStyle),
-                RatingBarIndicator(
-                  rating: average,
-                  itemSize: 28,
-                  unratedColor: backgroundColor,
-                  itemBuilder: (context, index) {
-                    return Icon(Icons.star, color: starColor);
-                  },
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "$counter $label",
-                  style: labelStyle,
-                  overflow: TextOverflow.fade,
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -227,24 +242,45 @@ class _CustomReviewBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(width: 60, child: label), // Fixed width for consistent alignment
+          SizedBox(
+            width: 50, 
+            child: label,
+          ),
           SizedBox(width: space),
           Expanded(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
                 height: thickness,
-                child: LinearProgressIndicator(
-                  value: value.isFinite ? value : 0.0,
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                  backgroundColor: backgroundColor,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: value.isFinite && value >= 0 ? value : 0.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
+            ),
+          ),
+          SizedBox(width: 8),
+          Text(
+            '${(value * counter).round()}',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
